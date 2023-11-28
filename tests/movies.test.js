@@ -148,3 +148,34 @@ describe("PUT /api/movies/:id", () => {
     expect(response.status).toEqual(404);
   });
 });
+
+describe("DELETE /api/movies/:id", () => {
+  it("should delete the specified movie", async () => {
+    const newMovie = {
+      title: "Inception",
+      director: "Christopher Nolan",
+      year: "2010",
+      color: true,
+      duration: 148,
+    };
+
+    const createResponse = await request(app).post("/api/movies").send(newMovie);
+
+    const idToDelete = createResponse.body.id;
+
+    const deleteResponse = await request(app).delete(`/api/movies/${idToDelete}`);
+
+    expect(deleteResponse.status).toEqual(204);
+
+    const [result] = await database.query("SELECT * FROM movies WHERE id=?", idToDelete);
+
+    expect(result).toHaveLength(0);
+  });
+
+  it("should return an error if trying to delete a non-existing movie", async () => {
+
+    const deleteResponse = await request(app).delete("/api/movies/999");
+
+    expect(deleteResponse.status).toEqual(404);
+  });
+});
