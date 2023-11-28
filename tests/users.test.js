@@ -69,7 +69,13 @@ describe("PUT /api/users/:id", () => {
 
     const [insertResult] = await database.query(
       "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
-      [newUser.firstname, newUser.lastname, newUser.email, newUser.city, newUser.language]
+      [
+        newUser.firstname,
+        newUser.lastname,
+        newUser.email,
+        newUser.city,
+        newUser.language,
+      ]
     );
 
     const id = insertResult.insertId;
@@ -88,7 +94,10 @@ describe("PUT /api/users/:id", () => {
 
     expect(updateResponse.status).toEqual(204);
 
-    const [resultUpdate] = await database.query("SELECT * FROM users WHERE id=?", id);
+    const [resultUpdate] = await database.query(
+      "SELECT * FROM users WHERE id=?",
+      id
+    );
 
     const [userInDatabase] = resultUpdate;
 
