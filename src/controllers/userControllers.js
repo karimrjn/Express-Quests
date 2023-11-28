@@ -47,8 +47,36 @@ const postUser = (req, res) => {
     });
 };
 
+const updateUser = (req, res) => {
+  const id = parseInt(req.params.id);
+  const { firstname, lastname, email, city, language } = req.body;
+
+  if (!id || !firstname || !lastname || !email || !city || !language) {
+    return res.status(400).json({ error: 'Bad Request. Missing required fields.' });
+  }
+
+  database
+    .query(
+      "UPDATE users SET firstname=?, lastname=?, email=?, city=?, language=? WHERE id=?",
+      [firstname, lastname, email, city, language, id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows > 0) {
+        res.status(204).send();
+      } else {
+        res.status(404).json({ error: 'User not found.' });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error.' });
+    });
+};
+
+
 module.exports = {
   getUsers,
   getUserById,
   postUser,
+  updateUser,
 };
